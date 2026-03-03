@@ -1,19 +1,11 @@
-# Welcome to MkDocs
+# 我的技术笔记
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+欢迎来到我的知识库！这里记录了我学习编程过程中的笔记和心得。
 
-## Commands
+## 📚 快速导航
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+- [MySQL学习笔记](MySQL学习笔记/index.md)
 
-## Project layout
+---
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
-
-## first name
+> 使用右上角的搜索框可以快速找到任何内容！
