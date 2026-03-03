@@ -1,0 +1,56 @@
+# 网站基本信息
+site_name: 我的技术笔记
+site_description: 记录编程学习过程中的点点滴滴
+site_author: 你的名字
+
+# 主题配置 - Material 主题
+theme:
+  name: material
+  language: zh  # 中文界面
+  features:
+    - navigation.instant      # 页面瞬间切换（无刷新）
+    - navigation.tracking     # URL 随滚动更新
+    - navigation.top         # 返回顶部按钮
+    - search.highlight       # 搜索结果高亮
+    - search.suggest         # 搜索建议
+    - content.code.copy      # 代码块复制按钮
+  
+  # 主题颜色
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: 切换到暗色模式
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: 切换到亮色模式
+
+# 插件配置
+plugins:
+  - search:  # 全文搜索插件
+      lang:
+        - zh
+        - en
+
+# Markdown 扩展配置（让渲染更好看）
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences      # 代码块增强
+  - pymdownx.inlinehilite     # 行内代码高亮
+  - pymdownx.tabbed:          # 选项卡
+      alternate_style: true
+  - admonition                # 提示框
+  - pymdownx.details          # 折叠块
+  - attr_list                 # 属性列表
+  - md_in_html                # HTML 内 Markdown
+
+# 导航结构（自动生成，也可以手动指定）
+nav:
+  - 首页: index.md
+  # 后续添加笔记后，会自动在侧边栏显示
