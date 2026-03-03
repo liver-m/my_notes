@@ -1,0 +1,39 @@
+name: 部署 MkDocs 到 GitHub Pages
+
+on:
+  # 每当推送到 main 分支时触发部署
+  push:
+    branches:
+      - main
+      - master
+
+  # 允许手动触发部署
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v3
+
+      - name: 设置 Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: 安装依赖
+        run: |
+          pip install mkdocs-material
+          pip install mkdocs-minify-plugin  # 可选，用于压缩文件
+
+      - name: 构建网站
+        run: mkdocs build
+
+      - name: 部署到 GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
+          publish_branch: gh-pages
