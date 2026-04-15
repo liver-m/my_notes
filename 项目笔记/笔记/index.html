@@ -316,7 +316,7 @@
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        虚拟线程开启时
+        自定义压测工具失败原因
       
     </span>
   </a>
@@ -327,10 +327,38 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
+        虚拟线程开启与否的对比
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="虚拟线程开启与否的对比">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        虚拟线程开启时
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         虚拟线程关闭时
       
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -373,12 +401,15 @@
 坑点
 异常要继承 RuntimeException，否则每个方法都要显式声明 throws，代码很脏</p>
 <h3 id="virtual-threads">Virtual Threads</h3>
+<h4 id="_1">自定义压测工具失败原因</h4>
+<p>HttpClient使用内部线程池处理请求，send()同步阻塞导致压测时线程行为被干扰，实际验证改用日志线程名对比。</p>
+<h4 id="_2">虚拟线程开启与否的对比</h4>
 <p>1.关闭虚拟线程时是用的线程池里的线程，
 2.请求来了会创建虚拟线程，但虚拟线程跑在少量固定的carrier threads上，不是独占一个平台线程。
 3.虚拟线程在等待时会从承载线程上下来，等到好了就会重新挂载到承载线程。而关闭时线程会一直在承载线程上面等着</p>
-<h4 id="_1">虚拟线程开启时</h4>
+<h5 id="_3">虚拟线程开启时</h5>
 <p><img alt="image-20260415190031459" src="D:\学习笔记\docs\图片\image-20260415190031459.png" /></p>
-<h4 id="_2">虚拟线程关闭时</h4>
+<h5 id="_4">虚拟线程关闭时</h5>
 <p><img alt="image-20260415190112700" src="D:\学习笔记\docs\图片\image-20260415190112700.png" /></p>
 
 
