@@ -367,6 +367,61 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#o1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        哈希函数为什么O(1)?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        哈希冲突？
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        链表太长？
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        线程不安全？
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        扩容为啥要重新插每个节点？
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -392,7 +447,7 @@
 为什么需要
 堆内存是有限制的，满了就会卡住，所以需要把一些用不到的垃圾给清理掉
 坑点
-在GC过程中会触发STW，整个程序会停止执行，这个过程的快慢往往决定着程序运行速度</p>
+在GC过程中会触发STW，整个程序会停止执行，这个过程的快慢往往决定着程序运行速度(这里面的理解核心其实要了解堆，它会扫描堆，在堆里但没人引用的对象会被清理掉，更深一步去了解就是可达性分析了（Reachability Analysis）)</p>
 <h3 id="exception">exception 处理</h3>
 <p>是什么 
 将具体是什么错误正确显示在控制台和客户端 
@@ -411,6 +466,17 @@
 <p><img alt="image-20260415190031459" src="D:\学习笔记\docs\图片\image-20260415190031459.png" /></p>
 <h5 id="_4">虚拟线程关闭时</h5>
 <p><img alt="image-20260415190112700" src="D:\学习笔记\docs\图片\image-20260415190112700.png" /></p>
+<h3 id="o1"><strong>哈希函数为什么</strong>O(1)?</h3>
+<p>经过哈希函数的计算，再进行取模，原来的key会变为在一定范围内的整数，而且这个整数经过这个函数计算并取模后是确定的，因此可以用其作为下标，所以查询速度接近O（1）</p>
+<h3 id="_5"><strong>哈希冲突</strong>？</h3>
+<p>为了解决多个key经过计算并取模后得到相同的结果，最后会在同一个桶里面，这里采取链表来解决，相同的就继续挂在后面</p>
+<h3 id="_6"><strong>链表太长</strong>？</h3>
+<p>当数组长度小于64且链表长度大于8时会先采取数组扩容的方法，来缩短链表的长度，如果数组大于等于64且链表长度大于8时，链表还是太长就采取红黑树代替链表</p>
+<h3 id="_7"><strong>线程不安全</strong>？</h3>
+<p>当扩容数组时，Java7采取头插法进行重新排列链表，多个线程同时操作，这里就有可能出现，节点的next指针互相指向，形成环形链表，CPU请求直接干烧。</p>
+<p>Java8采取了尾插法，但依旧没能解决节点覆盖的问题。</p>
+<h3 id="_8"><strong>扩容为啥要重新插每个节点</strong>？</h3>
+<p>因为扩容后，key经过哈希计算后在进行取模可能会得到不同的下标，每个桶里面的节点都可能去新的桶里面</p>
 
 
 
