@@ -488,6 +488,39 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#threadblockedwaiting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Thread六种状态，BLOCKED和WAITING的区别
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#synchronized" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        synchronized锁的是什么
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        可重入是什么，为什么需要可重入
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -562,6 +595,12 @@
 <p>fail-fast是迭代器里面用来判断遍历时是否列表有被修改，如果有就直接抛ConcurrentModificationException，程序直接崩，没有就继续。通过的时一个记录被修改次数的变量modCount，还有另外一个变量expectedModCount来比对。通过用迭代器里面的自带的操作可以避免。</p>
 <h3 id="for">普通for循环遍历删除有什么坑</h3>
 <p>删除后后面的元素index前移，下一次循环跳过了，会导致漏掉一些元素</p>
+<h3 id="threadblockedwaiting"><strong>Thread六种状态，BLOCKED和WAITING的区别</strong></h3>
+<p>NEW, RUNNABLE, WAITING, BLOCKED, TIMED_WAITING, TERMINATED. BLOCKED和WAITING的区别是一个是被动的等待，一个是主动的等待notify()唤醒。</p>
+<h3 id="synchronized"><strong>synchronized锁的是什么</strong></h3>
+<p>实例方法：锁的是this（当前对象实例），静态方法：锁的是Class对象，代码块：锁的是括号里的对象</p>
+<h3 id="_10"><strong>可重入是什么，为什么需要可重入</strong></h3>
+<p>可重入是同一个线程继续用同一个锁，如果不能重入就会导致线程把自己锁死。Monitor内部有计数器，重入+1，退出-1，归零才释放锁。</p>
 
 
 
