@@ -521,6 +521,50 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        可见性问题是什么，为什么会出现
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#volatile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        volatile解决了哪两个问题，不能解决什么
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#threadlocal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ThreadLocal是什么，内存泄漏怎么产生，怎么解决
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#happens-before" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        happens-before是什么，说出两条规则
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -601,6 +645,14 @@
 <p>实例方法：锁的是this（当前对象实例），静态方法：锁的是Class对象，代码块：锁的是括号里的对象</p>
 <h3 id="_10"><strong>可重入是什么，为什么需要可重入</strong></h3>
 <p>可重入是同一个线程继续用同一个锁，如果不能重入就会导致线程把自己锁死。Monitor内部有计数器，重入+1，退出-1，归零才释放锁。</p>
+<h3 id="_11"><strong>可见性问题是什么，为什么会出现</strong></h3>
+<p>cpu有缓存，工作内存，修改后不一定立刻同步，所以一个线程修改了变量，另一个线程可能永远看不到</p>
+<h3 id="volatile"><strong>volatile解决了哪两个问题，不能解决什么</strong></h3>
+<p>可见性问题，禁止指令重排序，不能解决原子性问题</p>
+<h3 id="threadlocal"><strong>ThreadLocal是什么，内存泄漏怎么产生，怎么解决</strong></h3>
+<p>是每个线程单独存一份数据，线程之间相互隔离，线程池里的线程不可销毁，value一直被ThreadLocalMap引用着，无法GC回收，用.remove()解决</p>
+<h3 id="happens-before"><strong>happens-before是什么，说出两条规则</strong></h3>
+<p>JVM规定的线程之间可见性和有序性规则。传递性规则，volatile规则，监视器锁规则，程序顺序规则</p>
 
 
 
