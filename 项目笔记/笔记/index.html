@@ -653,6 +653,39 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#aop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AOP解决什么问题（一句话）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#jdk-vs-cglib" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JDK代理 vs CGLIB区别（一张表）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#transactional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        @Transactional失效的场景和原因
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -782,6 +815,37 @@
 </ol>
 <h3 id="_15"><strong>循环依赖怎么解决</strong></h3>
 <p>先把对象创建出来，先不注入字段，对象实例化完立刻存起来，注入阶段需要它时先把半成品交出去，等双方都注入完，半成品自然变成完整品。这个机制叫<strong>三级缓存</strong>。</p>
+<h3 id="aop"><strong>AOP解决什么问题（一句话）</strong></h3>
+<p>公共逻辑（事务/日志/权限校验）散落在每个方法里，改需求就改每个方法。AOP把这些逻辑抽到切面，业务代码零侵入。</p>
+<h3 id="jdk-vs-cglib"><strong>JDK代理 vs CGLIB区别（一张表）</strong></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>JDK代理</th>
+<th>CGLIB</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>怎么伪装</td>
+<td>实现同一个接口</td>
+<td>继承原始类生成子类</td>
+</tr>
+<tr>
+<td>要求</td>
+<td>必须有接口</td>
+<td>不需要接口</td>
+</tr>
+<tr>
+<td>限制</td>
+<td>没接口歇菜</td>
+<td><code>final</code>类歇菜</td>
+</tr>
+</tbody>
+</table>
+<h3 id="transactional"><strong><code>@Transactional</code>失效的场景和原因</strong></h3>
+<p>同类内部用<code>this</code>调用，绕过代理对象，AOP失效，<code>@Transactional</code>不生效.</p>
 
 
 
