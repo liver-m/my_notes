@@ -846,6 +846,13 @@
 </table>
 <h3 id="transactional"><strong><code>@Transactional</code>失效的场景和原因</strong></h3>
 <p>同类内部用<code>this</code>调用，绕过代理对象，AOP失效，<code>@Transactional</code>不生效.</p>
+<ol>
+<li>索引是目录，解决全表扫描问题，代价是空间+写入维护</li>
+<li>B+树内部节点只存方向→上千个叉→3-4层→个位数IO</li>
+<li>叶子节点链表→范围查询横扫</li>
+<li>不用BST→2个叉→层数爆炸(几十层)→IO爆炸</li>
+<li>联合索引按列顺序组织，最左前缀原则，跳列索引失效</li>
+</ol>
 
 
 
