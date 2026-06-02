@@ -665,10 +665,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#jdk-vs-cglib" class="md-nav__link">
+  <a href="#jdk-vs-cglibcode-generation-library" class="md-nav__link">
     <span class="md-ellipsis">
       
-        JDK代理 vs CGLIB区别（一张表）
+        JDK代理 vs CGLIB(Code Generation Library)区别（一张表）
       
     </span>
   </a>
@@ -721,10 +721,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#mvcc_1" class="md-nav__link">
+  <a href="#mvccmulti-version-concurrency-control" class="md-nav__link">
     <span class="md-ellipsis">
       
-        MVCC
+        MVCC（Multi-Version Concurrency Control）
       
     </span>
   </a>
@@ -878,7 +878,7 @@
 <p>先把对象创建出来，先不注入字段，对象实例化完立刻存起来，注入阶段需要它时先把半成品交出去，等双方都注入完，半成品自然变成完整品。这个机制叫<strong>三级缓存</strong>。</p>
 <h3 id="aop"><strong>AOP解决什么问题（一句话）</strong></h3>
 <p>公共逻辑（事务/日志/权限校验）散落在每个方法里，改需求就改每个方法。AOP把这些逻辑抽到切面，业务代码零侵入。</p>
-<h3 id="jdk-vs-cglib"><strong>JDK代理 vs CGLIB区别（一张表）</strong></h3>
+<h3 id="jdk-vs-cglibcode-generation-library"><strong>JDK代理 vs CGLIB(Code Generation Library)区别（一张表）</strong></h3>
 <table>
 <thead>
 <tr>
@@ -933,19 +933,19 @@
 </thead>
 <tbody>
 <tr>
-<td>READ UNCOMMITTED</td>
+<td>READ UNCOMMITTED(RU)</td>
 <td>❌会发生</td>
 <td>❌会发生</td>
 <td>❌会发生</td>
 </tr>
 <tr>
-<td>READ COMMITTED</td>
+<td>READ COMMITTED(RC)</td>
 <td>✅解决</td>
 <td>❌会发生</td>
 <td>❌会发生</td>
 </tr>
 <tr>
-<td>REPEATABLE READ</td>
+<td>REPEATABLE READ(RR)</td>
 <td>✅解决</td>
 <td>✅解决</td>
 <td>⚠️理论上会，MySQL用MVCC基本解决</td>
@@ -958,7 +958,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="mvcc_1">MVCC</h3>
+<h3 id="mvccmulti-version-concurrency-control">MVCC（Multi-Version Concurrency Control）</h3>
 <p>在事务开始读数据的那一刻，MySQL会生成一个ReadView。Undo Log存储历史版本，每次修改数据时旧版本写入Undo Log，通过roll_pointer串成版本链。</p>
 <p>在去读一行数据时，先看这行数据的 trx_id 是多少</p>
 <p>→ 比我的ReadView里最小活跃ID还小？说明这个事务在我开始之前就提交了，我能看到。</p>
@@ -971,14 +971,53 @@
 <p><strong>Q2：MVCC怎么实现的？解决了什么问题？</strong></p>
 <p>ReadView中记录了活跃的未提交的事务，这些版本都不该看，通过Undo Log的版本链的roll_pointer指向历史版本，去看上一版。解决了高并发和事务的安全性矛盾问题</p>
 <ul>
-<li>行锁：锁索引记录，WHERE不走索引 → 全表扫描 → 每行加锁 → 等同表锁</li>
+<li>行锁(记录锁)：锁索引记录，WHERE不走索引 → 全表扫描 → 每行加锁 → 等同表锁</li>
 <li>间隙锁：锁空隙，防INSERT，解决幻读，RR级别下生效</li>
 <li>表锁：整张表阻塞，MyISAM默认，InnoDB退化情况出现</li>
+<li>临键锁(Next-Key Lock) = 记录锁 + 间隙锁。</li>
 </ul>
 <p>InnoDB vs MyISAM：
 - InnoDB有redo log → 支持崩溃恢复 → 才能真正保证事务原子性
 - MyISAM没有redo log → 断电数据损坏 → 不支持事务
 - 本质区别不是特性清单，是有没有redo log</p>
+<p><strong>缓存穿透</strong>：黑客可以通过访问大量的不存在的Id，这样每次访问的数据都在redis缓存里找不到，只能每次都跑到数据库里面去找，这就会导致缓存穿透。且因为在数据库里面还是找不到这个数据然后就不会把查找的这个Id存到redis中，以后每次访问这个Id，还是会缓存穿透到数据库，可能会导致数据库炸掉</p>
+<p><strong>解决办法</strong>：</p>
+<ol>
+<li>
+<p>空值+ttl（time to live）。访问的数据如果是一个不存在的数据就把这个空值写入/缓存到Redis(打上短TTL)，并给这个它的寿命设定一个时长，时间一到就把其在Redis中存的给清理掉，以免Redis被占满。但是这个解决办法的坑就是黑客可以通过每次都访问新的Id，来让空值+ttl都没有机会使用出来。</p>
+</li>
+<li>
+<p>布隆过滤器。每向数据库里面存一个数据，过滤器就会对其进行哈希处理，记录其对应的哈希值。这样可以保证查询的Id进行哈希处理后如果过滤器里面的哈希值没有的对应的话，就说明这个查询的数据是一定不存在的。但是不能保证如果有对应的哈希值的话，就一定有对应的数据。所以真实生产环境中都是通过跟解决办法一一起来处理缓存穿透的问题的。</p>
+</li>
+</ol>
+<p>布隆过滤器的误判其实是因为不同key经过hash计算后，可能得到相同的hash值，还有布隆过滤器里面存的其实是一个bit数组，存一个key时，转化为hash值时，算出了几个位置就把那几个位置从0置为1，进来查询的只要在那几个中有一个为0，就一定不存在。</p>
+<p>还有预热，在服务启动前，会先把所有数据先往过滤器里面过一遍，不然它都不知道数据库里面有哪些数据。布隆过滤器中不能删除，删除可能导致误伤，因为删除需要把bit位从1置0，但一个bit位可能是多个数据公用的。</p>
+<p><strong>缓存雪崩</strong>：</p>
+<ol>
+<li>就是redis突然一下子崩掉了，导致大量的访问全部进入数据库，导致数据库卡死崩掉。</li>
+<li>redis的大量的key的ttl同时到期，导致大量请求进入数据库，数据库崩掉。</li>
+</ol>
+<p>解决办法：</p>
+<p>第二种问题的解决办法就是给每个key的ttl设置的不一样，通过基础ttl + 一个随机值（TTL 加随机抖动），这样就不会同一时间大量key 的ttl同时到期。</p>
+<p>第一种问题的解决不能跟第一种情况一样，ttl存在redis内存中，跟着redis一起死掉了，所以不可能用ttl来解决。</p>
+<p>首先采用从源头根治，第一层：高可用，主从加哨兵，主节点挂了从节点就顶上去。</p>
+<p>其次通过限流降级，将mysql允许访问的数量降低，牺牲用户的体验换来数据库的安全。</p>
+<p>最后，重建加锁：redis修复好后，重建加锁可以做到不让重复的请求进入数据库，因为这些请求查的是【同一条数据】，所以只放一条请求进来，重建redis缓存。</p>
+<p>这三个，它们各管一段，高可用=防Redis挂(治本);限流降级=Redis真挂了那段时间保MySQL(急救);重建加锁=Redis恢复后缓存空、重建那一瞬防重复请求二次冲垮(去重)。</p>
+<p>数据库为啥会被冲跨？大量请求同时进来，每个请求被分到的cpu计算时间就变短了，磁盘IO就排长队，每条查询就更慢，导致一条请求连接被一直霸占，请求就一直堆积，磁盘IO排的队就更长，最后MySQL假死或者被OOM killer杀掉。MySQL的服务能力彻底失效，但是数据还在。</p>
+<p><strong>RDB(快照):</strong></p>
+<ul>
+<li>文件小、恢复快(直接加载快照,不用重放命令)。</li>
+<li>致命缺点:<strong>它是"定时拍照"的</strong>。比如每 5 分钟拍一次。如果在第 4 分钟宕机,<strong>最近 4 分钟的数据全丢</strong>(还没来得及拍下一张照)。</li>
+<li>适合:能容忍丢几分钟数据的场景(缓存、不那么关键的数据)。</li>
+</ul>
+<p><strong>AOF(命令日志):</strong></p>
+<ul>
+<li>每条写命令都追加记录(几乎实时),宕机最多丢<strong>一两秒</strong>的数据,<strong>安全得多</strong>。</li>
+<li>缺点:文件大、恢复慢(要把上亿条命令<strong>重新执行一遍</strong>才能恢复)。</li>
+<li>适合:对数据丢失敏感、不能容忍丢几分钟的场景。</li>
+</ul>
+<p><strong>持久化</strong>:Redis 数据在内存,宕机清零,需备份到硬盘。 <strong>RDB</strong>:存快照(最终状态)。文件小、恢复快(直接加载);缺点定时拍照,宕机丢最近几分钟数据。 <strong>AOF</strong>:存写命令流水账。几乎实时、最多丢一两秒,安全;缺点文件大、恢复慢(重放所有命令)。 <strong>AOF 重写</strong>:照着内存当前状态,反推最精简命令重写新文件(不是逐条删旧),治文件膨胀;重写期间新命令进缓冲区,完成后补到末尾,不丢数据。 <strong>权衡</strong>:RDB 拿安全换性能,AOF 拿性能换安全。生产常两者并用。</p>
 
 
 
